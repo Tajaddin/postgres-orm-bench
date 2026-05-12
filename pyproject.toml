@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "postgres-orm-bench"
+version = "0.1.0"
+description = "Head-to-head benchmark of Python database access layers: SQLAlchemy ORM vs SQLAlchemy Core vs Peewee vs raw psycopg. Same schema, same workload, same metrics."
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [{name = "Tajaddin Gafarov", email = "gafarovtajaddin@gmail.com"}]
+keywords = ["postgres", "sqlite", "orm", "benchmark", "sqlalchemy", "peewee", "psycopg"]
+dependencies = [
+    "sqlalchemy>=2.0",
+    "peewee>=3.17",
+    "click>=8.1",
+]
+
+[project.optional-dependencies]
+postgres = ["psycopg[binary]>=3.1"]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+orm-bench = "orm_bench.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
