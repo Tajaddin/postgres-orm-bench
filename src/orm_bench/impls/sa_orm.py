@@ -9,6 +9,15 @@ from sqlalchemy import ForeignKey, Integer, String, create_engine, func, select
 from sqlalchemy.orm import DeclarativeBase, Mapped, Session, mapped_column, relationship
 
 
+def _sa_dsn(dsn: str) -> str:
+    """Map a generic postgres DSN to SQLAlchemy's psycopg (v3) dialect, since
+    this project ships psycopg[binary] (v3), not psycopg2."""
+    for prefix in ("postgresql://", "postgres://"):
+        if dsn.startswith(prefix):
+            return "postgresql+psycopg://" + dsn[len(prefix):]
+    return dsn
+
+
 class _Base(DeclarativeBase):
     pass
 
@@ -45,7 +54,7 @@ class SaOrmImpl:
 
     def setup(self, dsn: str) -> None:
         ca = {"check_same_thread": False} if dsn.startswith("sqlite") else {}
-        self.engine = create_engine(dsn, connect_args=ca, future=True)
+        self.engine = create_engine(_sa_dsn(dsn), connect_args=ca, future=True)
         _Base.metadata.drop_all(self.engine)
         _Base.metadata.create_all(self.engine)
         self._session = Session(self.engine, future=True)

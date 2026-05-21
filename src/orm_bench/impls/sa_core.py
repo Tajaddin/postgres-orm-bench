@@ -19,6 +19,15 @@ from sqlalchemy import (
 )
 
 
+def _sa_dsn(dsn: str) -> str:
+    """Map a generic postgres DSN to SQLAlchemy's psycopg (v3) dialect, since
+    this project ships psycopg[binary] (v3), not psycopg2."""
+    for prefix in ("postgresql://", "postgres://"):
+        if dsn.startswith(prefix):
+            return "postgresql+psycopg://" + dsn[len(prefix):]
+    return dsn
+
+
 _meta = MetaData()
 
 _users = Table(
@@ -50,7 +59,7 @@ class SaCoreImpl:
 
     def setup(self, dsn: str) -> None:
         ca = {"check_same_thread": False} if dsn.startswith("sqlite") else {}
-        self.engine = create_engine(dsn, connect_args=ca, future=True)
+        self.engine = create_engine(_sa_dsn(dsn), connect_args=ca, future=True)
         _meta.drop_all(self.engine)
         _meta.create_all(self.engine)
 

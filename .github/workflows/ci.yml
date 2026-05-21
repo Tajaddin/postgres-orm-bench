@@ -1,0 +1,46 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 15
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install (with the psycopg postgres extra)
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev,postgres]"
+      - name: Unit tests (SQLite smoke suite)
+        run: pytest -q
+      - name: Benchmark all 4 ORMs against Postgres 16
+        env:
+          ORM_BENCH_DSN: postgresql://postgres:postgres@localhost:5432/postgres
+        run: |
+          orm-bench --records 800 --users 100 --iter 1 --out bench/ci-postgres.json
+          echo "--- results ---"
+          cat bench/ci-postgres.json
