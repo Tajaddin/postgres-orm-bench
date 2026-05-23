@@ -10,13 +10,22 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    # NOTE: PG_TEST_PASSWORD is a CI-only synthetic credential for the
+    # ephemeral postgres service container below. It is not used by the
+    # library, not exposed outside this workflow, and the container is
+    # destroyed when the job ends. Do not reuse this value anywhere.
+    env:
+      PG_TEST_USER: postgres
+      PG_TEST_PASSWORD: ci-only-not-secret
+      PG_TEST_DB: postgres
+
     services:
       postgres:
         image: postgres:16
         env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: postgres
+          POSTGRES_USER: ${{ env.PG_TEST_USER }}
+          POSTGRES_PASSWORD: ${{ env.PG_TEST_PASSWORD }}
+          POSTGRES_DB: ${{ env.PG_TEST_DB }}
         ports:
           - 5432:5432
         options: >-
@@ -39,7 +48,7 @@ jobs:
         run: pytest -q
       - name: Benchmark all 4 ORMs against Postgres 16
         env:
-          ORM_BENCH_DSN: postgresql://postgres:postgres@localhost:5432/postgres
+          ORM_BENCH_DSN: postgresql://${{ env.PG_TEST_USER }}:${{ env.PG_TEST_PASSWORD }}@localhost:5432/${{ env.PG_TEST_DB }}
         run: |
           orm-bench --records 800 --users 100 --iter 1 --out bench/ci-postgres.json
           echo "--- results ---"
