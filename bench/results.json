@@ -11,134 +11,134 @@
       "impl": "sqlalchemy_orm",
       "op": "bulk_insert",
       "n": 8000,
-      "seconds": 0.7039,
-      "ops_per_sec": 11364.5,
+      "seconds": 0.2448,
+      "ops_per_sec": 32680.9,
       "rows": 8100
     },
     {
       "impl": "sqlalchemy_orm",
       "op": "single_lookup",
       "n": 200,
-      "seconds": 0.1114,
-      "ops_per_sec": 1795.5,
+      "seconds": 0.0305,
+      "ops_per_sec": 6554.7,
       "rows": 200
     },
     {
       "impl": "sqlalchemy_orm",
       "op": "indexed_filter",
       "n": 200,
-      "seconds": 0.0752,
-      "ops_per_sec": 2661.3,
+      "seconds": 0.0395,
+      "ops_per_sec": 5063.0,
       "rows": 12076
     },
     {
       "impl": "sqlalchemy_orm",
       "op": "complex_join",
       "n": 1,
-      "seconds": 0.0043,
-      "ops_per_sec": 235.2,
+      "seconds": 0.0035,
+      "ops_per_sec": 288.3,
       "rows": 100
     },
     {
       "impl": "sqlalchemy_core",
       "op": "bulk_insert",
       "n": 8000,
-      "seconds": 0.0549,
-      "ops_per_sec": 145644.7,
+      "seconds": 0.0328,
+      "ops_per_sec": 243536.4,
       "rows": 8100
     },
     {
       "impl": "sqlalchemy_core",
       "op": "single_lookup",
       "n": 200,
-      "seconds": 0.0509,
-      "ops_per_sec": 3927.6,
+      "seconds": 0.022,
+      "ops_per_sec": 9089.3,
       "rows": 200
     },
     {
       "impl": "sqlalchemy_core",
       "op": "indexed_filter",
       "n": 200,
-      "seconds": 0.0788,
-      "ops_per_sec": 2539.0,
+      "seconds": 0.0284,
+      "ops_per_sec": 7046.9,
       "rows": 12076
     },
     {
       "impl": "sqlalchemy_core",
       "op": "complex_join",
       "n": 1,
-      "seconds": 0.0042,
-      "ops_per_sec": 239.2,
+      "seconds": 0.0021,
+      "ops_per_sec": 471.8,
       "rows": 100
     },
     {
       "impl": "peewee",
       "op": "bulk_insert",
       "n": 8000,
-      "seconds": 0.2115,
-      "ops_per_sec": 37818.0,
+      "seconds": 0.0772,
+      "ops_per_sec": 103650.8,
       "rows": 8100
     },
     {
       "impl": "peewee",
       "op": "single_lookup",
       "n": 200,
-      "seconds": 0.08,
-      "ops_per_sec": 2499.0,
+      "seconds": 0.0276,
+      "ops_per_sec": 7243.0,
       "rows": 200
     },
     {
       "impl": "peewee",
       "op": "indexed_filter",
       "n": 200,
-      "seconds": 0.0817,
-      "ops_per_sec": 2447.7,
+      "seconds": 0.0294,
+      "ops_per_sec": 6796.8,
       "rows": 12076
     },
     {
       "impl": "peewee",
       "op": "complex_join",
       "n": 1,
-      "seconds": 0.009,
-      "ops_per_sec": 111.3,
+      "seconds": 0.0024,
+      "ops_per_sec": 412.7,
       "rows": 100
     },
     {
       "impl": "raw_sql",
       "op": "bulk_insert",
       "n": 8000,
-      "seconds": 0.0369,
-      "ops_per_sec": 216685.3,
+      "seconds": 0.0244,
+      "ops_per_sec": 328521.9,
       "rows": 8100
     },
     {
       "impl": "raw_sql",
       "op": "single_lookup",
       "n": 200,
-      "seconds": 0.0136,
-      "ops_per_sec": 14654.3,
+      "seconds": 0.0062,
+      "ops_per_sec": 32470.7,
       "rows": 200
     },
     {
       "impl": "raw_sql",
       "op": "indexed_filter",
       "n": 200,
-      "seconds": 0.0141,
-      "ops_per_sec": 14231.6,
+      "seconds": 0.0077,
+      "ops_per_sec": 25876.2,
       "rows": 12076
     },
     {
       "impl": "raw_sql",
       "op": "complex_join",
       "n": 1,
-      "seconds": 0.0039,
-      "ops_per_sec": 255.7,
+      "seconds": 0.0022,
+      "ops_per_sec": 464.6,
       "rows": 100
     }
   ],
   "impl_code_lines": {
-    "sqlalchemy_orm": 116,
-    "sqlalchemy_core": 110,
+    "sqlalchemy_orm": 123,
+    "sqlalchemy_core": 117,
     "peewee": 102,
     "raw_sql": 190
   }

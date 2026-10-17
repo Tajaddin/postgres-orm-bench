@@ -1,6 +1,6 @@
 # postgres-orm-bench
 
-> Head-to-head benchmark of four Python database access layers on the *same* schema, *same* workload, *same* assertions. **Raw SQL is 5.9× faster on bulk insert and 8.2× faster on point lookups vs SQLAlchemy ORM** — but on complex multi-table JOINs the spread collapses to 8% because the SQL planner does the work, not the ORM. Code-line cost of choosing raw SQL: **+64% more lines** for the same workload. **26/26 tests pass in 4.8 s** and every implementation produces byte-identical join results (parity test).
+> Head-to-head benchmark of four Python database access layers on the *same* schema, *same* workload, *same* assertions. **Raw SQL is 10× faster on bulk insert and 5× faster on point lookups vs SQLAlchemy ORM** — but on complex multi-table JOINs every implementation lands within 2× of the others because the SQL planner does the work, not the ORM. Code-line cost of choosing raw SQL: **+54% more lines** for the same workload. **26/26 tests pass in 4.8 s** and every implementation produces byte-identical join results (parity test).
 
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE) [![Tests](https://img.shields.io/badge/tests-26%20passing-brightgreen)](#tests) [![Python](https://img.shields.io/badge/python-3.10%2B-blue)]()
 
@@ -12,20 +12,20 @@ The schema is intentionally non-trivial — users + products + orders, two FKs, 
 
 ## Hero numbers — `python -m orm_bench.cli --records 2000 --orders-per-product 3 --users 100`
 
-8000 rows inserted, 200 lookups per measured op, SQLite backend on commodity laptop, median of 3 iterations:
+8,100 rows inserted, 200 lookups per measured op, SQLite backend, median of 3 iterations. Measured 2026-10-16 on an Intel i7 (20 threads), Windows 11, Python 3.12; an earlier run on a slower laptop showed the same ordering with a wider spread.
 
 | Operation | SQLAlchemy ORM | SQLAlchemy Core | Peewee | Raw SQL | Winner |
 |---|---:|---:|---:|---:|:---:|
-| `bulk_insert` (ops/s) | 11,364 | 145,645 | 37,818 | **216,685** | raw |
-| `single_lookup` (ops/s) | 1,795 | 3,928 | 2,499 | **14,654** | raw |
-| `indexed_filter` (ops/s) | 2,661 | 2,539 | 2,447 | **14,232** | raw |
-| `complex_join` (ops/s) | 235 | 239 | 111 | **256** | raw (barely) |
-| Code lines for full workload | 116 | 110 | 102 | **190** | ORMs (-46 %) |
+| `bulk_insert` (ops/s) | 32,681 | 243,536 | 103,651 | **328,522** | raw |
+| `single_lookup` (ops/s) | 6,555 | 9,089 | 7,243 | **32,471** | raw |
+| `indexed_filter` (ops/s) | 5,063 | 7,047 | 6,797 | **25,876** | raw |
+| `complex_join` (ops/s) | 288 | **472** | 413 | 465 | core (barely) |
+| Code lines for full workload | 123 | 117 | 102 | **190** | ORMs (-35 %) |
 
 ### The two facts worth pulling out
 
-1. **Raw SQL dominates everything except the join.** On bulk insert, point lookups, and indexed filters the gap is 5–8×. The ORM cost is real and it's mostly Python-object materialization overhead, not SQL.
-2. **On the complex JOIN, everything converges.** All four are within 2× of each other because Postgres / SQLite is doing the actual work in the planner. The ORM cost vanishes when the database is the bottleneck — which is exactly the case in most production read paths.
+1. **Raw SQL dominates everything except the join.** On bulk insert, point lookups, and indexed filters the gap to the ORM is 5–10×. The ORM cost is real and it's mostly Python-object materialization overhead, not SQL.
+2. **On the complex JOIN, everything converges.** All four are within 2× of each other (SQLAlchemy Core even edges out raw SQL) because Postgres / SQLite is doing the actual work in the planner. The ORM cost vanishes when the database is the bottleneck — which is exactly the case in most production read paths.
 
 **Decision rule that falls out of the data:** if your hot path is "select N rows by primary key and hand them to Pydantic," raw SQL pays for itself. If your hot path is "JOIN three tables and aggregate," the ORM costs you nothing measurable AND gives you back ~40 % of your code.
 
